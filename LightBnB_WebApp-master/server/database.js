@@ -18,16 +18,18 @@ const pool = new Pool({
  * @return {Promise<{}>} A promise to the user.
  */
 const getUserWithEmail = function(email) {
-  let user;
-  for (const userId in users) {
-    user = users[userId];
-    if (user.email.toLowerCase() === email.toLowerCase()) {
-      break;
-    } else {
-      user = null;
-    }
-  }
-  return Promise.resolve(user);
+  // const promise = 
+    return pool.query(`
+    SELECT email
+    FROM users
+    WHERE email = $1
+    `, [email])
+    .then(res => {
+      // console.log(res.rows[0]);
+      return res.rows[0]
+    })
+    .catch(err => null)
+  // return promise;
 }
 exports.getUserWithEmail = getUserWithEmail;
 
@@ -37,7 +39,13 @@ exports.getUserWithEmail = getUserWithEmail;
  * @return {Promise<{}>} A promise to the user.
  */
 const getUserWithId = function(id) {
-  return Promise.resolve(users[id]);
+  return pool.query(`
+  SELECT id
+  FROM users
+  WHERE id = $1
+  `, [id])
+  .then(res => res.rows[0])
+  .catch(err => null)
 }
 exports.getUserWithId = getUserWithId;
 
@@ -48,10 +56,11 @@ exports.getUserWithId = getUserWithId;
  * @return {Promise<{}>} A promise to the user.
  */
 const addUser =  function(user) {
-  const userId = Object.keys(users).length + 1;
-  user.id = userId;
-  users[userId] = user;
-  return Promise.resolve(user);
+  pool.query(`
+  
+  `)
+
+  
 }
 exports.addUser = addUser;
 
@@ -101,3 +110,9 @@ const addProperty = function(property) {
   return Promise.resolve(property);
 }
 exports.addProperty = addProperty;
+
+const results = getUserWithEmail('tristanjacobs@gmail.com');
+console.log("results is :", results);
+results.then(res => {
+  console.log('res is:', res);
+})
