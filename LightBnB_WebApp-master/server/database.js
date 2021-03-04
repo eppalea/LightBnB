@@ -20,9 +20,9 @@ const pool = new Pool({
 const getUserWithEmail = function(email) {
   // const promise = 
     return pool.query(`
-    SELECT email
+    SELECT name
     FROM users
-    WHERE email = $1
+    WHERE email = $1;
     `, [email])
     .then(res => {
       // console.log(res.rows[0]);
@@ -40,9 +40,9 @@ exports.getUserWithEmail = getUserWithEmail;
  */
 const getUserWithId = function(id) {
   return pool.query(`
-  SELECT id
+  SELECT name
   FROM users
-  WHERE id = $1
+  WHERE id = $1;
   `, [id])
   .then(res => res.rows[0])
   .catch(err => null)
@@ -56,11 +56,14 @@ exports.getUserWithId = getUserWithId;
  * @return {Promise<{}>} A promise to the user.
  */
 const addUser =  function(user) {
-  pool.query(`
-  
-  `)
-
-  
+  // console.log('addUser');
+  return pool.query(`
+  INSERT INTO users (name, email, password)
+  VALUES ($1, $2, $3)
+  RETURNING *;
+  `, [user.name, user.email, user.password])
+  .then(res => res.rows[0])
+  .catch(err => null)
 }
 exports.addUser = addUser;
 
@@ -111,8 +114,8 @@ const addProperty = function(property) {
 }
 exports.addProperty = addProperty;
 
-const results = getUserWithEmail('tristanjacobs@gmail.com');
-console.log("results is :", results);
-results.then(res => {
-  console.log('res is:', res);
-})
+// const results = addUser() 
+// console.log("results is :", results);
+// results.then(res => {
+//   console.log('res is:', res);
+// })
